@@ -1,6 +1,6 @@
 {
   "name": "md2llm",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A CLI tool for converting markdown to LLM rules",
   "main": "index.js",
   "type": "module",
@@ -10,7 +10,9 @@
   "scripts": {
     "test": "node --test",
     "test:watch": "node --test --watch",
-    "test:coverage": "c8 node --test"
+    "test:coverage": "c8 node --test",
+    "prepublishOnly": "npm test",
+    "pack": "npm pack"
   },
   "keywords": [
     "markdown",
@@ -19,8 +21,16 @@
     "rules",
     "documentation"
   ],
-  "author": "",
+  "author": "Your Name <your.email@example.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mmason2-godaddy/md2llm.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mmason2-godaddy/md2llm/issues"
+  },
+  "homepage": "https://github.com/mmason2-godaddy/md2llm#readme",
   "dependencies": {
     "commander": "^11.1.0",
     "markdown-it": "^14.0.0"
