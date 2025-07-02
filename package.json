@@ -1,6 +1,6 @@
 {
   "name": "md2llm",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "description": "A CLI tool for converting markdown to LLM rules",
   "main": "index.js",
   "type": "module",
