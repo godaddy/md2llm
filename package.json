@@ -19,18 +19,20 @@
     "llm",
     "cli",
     "rules",
-    "documentation"
+    "documentation",
+    "context",
+    "godaddy"
   ],
-  "author": "Your Name <your.email@example.com>",
+  "author": "GoDaddy Operating Company, LLC",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mmason2-godaddy/md2llm.git"
+  "repository": "godaddy/md2llm.git",
+  "publishConfig": {
+    "access": "public"
   },
   "bugs": {
-    "url": "https://github.com/mmason2-godaddy/md2llm/issues"
+    "url": "https://github.com/godaddy/md2llm/issues"
   },
-  "homepage": "https://github.com/mmason2-godaddy/md2llm#readme",
+  "homepage": "https://github.com/godaddy/md2llm#readme",
   "dependencies": {
     "commander": "^11.1.0",
     "markdown-it": "^14.0.0"
