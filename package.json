@@ -1,0 +1,31 @@
+{
+  "name": "md2llm",
+  "version": "1.0.0",
+  "description": "A CLI tool for converting markdown to LLM rules",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "md2llm": "./index.js"
+  },
+  "scripts": {
+    "test": "node --test",
+    "test:watch": "node --test --watch",
+    "test:coverage": "c8 node --test"
+  },
+  "keywords": [
+    "markdown",
+    "llm",
+    "cli",
+    "rules",
+    "documentation"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^11.1.0",
+    "markdown-it": "^14.0.0"
+  },
+  "devDependencies": {
+    "c8": "^9.1.0"
+  }
+}
