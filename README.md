@@ -56,23 +56,24 @@ md2llm convert ./output ./docs ./src ./examples
 ## Output Format
 
 ### MD Format
+
+**Output file structure:**
 ```
 TITLE: Example Function
 DESCRIPTION: A simple JavaScript function
 SOURCE: docs/example.md
 LANGUAGE: javascript
 CODE:
-```javascript
 function greet(name) {
   return `Hello, ${name}!`;
 }
-```
-
 ----------------------------------------
 @example
 ```
 
 ### MDC Format (Cursor)
+
+**Output file structure:**
 ```
 ---
 description: example
@@ -84,12 +85,9 @@ DESCRIPTION: A simple JavaScript function
 SOURCE: docs/example.md
 LANGUAGE: javascript
 CODE:
-```javascript
 function greet(name) {
   return `Hello, ${name}!`;
 }
-```
-
 ----------------------------------------
 @example
 ```
