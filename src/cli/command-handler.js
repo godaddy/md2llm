@@ -21,12 +21,7 @@ export function setupCommands() {
   program
     .name('md2llm')
     .description('A CLI tool for converting markdown to LLM rules')
-    .version('1.0.0');
-
-  // Convert command
-  program
-    .command('convert')
-    .description('Convert markdown files to LLM rules')
+    .version('1.0.0')
     .argument('<dest>', 'Destination directory for output files')
     .argument('<dirs...>', 'Source directories containing markdown files')
     .option('-f, --format <format>', 'Output format (md or mdc)', 'md')

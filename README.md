@@ -2,6 +2,30 @@
 
 A command-line interface for converting markdown files to LLM rules, built with Commander.js.
 
+## What is md2llm?
+
+md2llm extracts **code examples** from your markdown documentation and converts them into LLM rules. Unlike sending entire documentation files to LLMs, this tool focuses on the most valuable content: **working code examples**.
+
+### Why Code Examples?
+
+- **More Effective Context**: Code examples provide concrete, actionable patterns that LLMs can follow
+- **Token Efficiency**: Instead of sending entire docs, you get focused, relevant code snippets
+- **Better Results**: LLMs perform better with specific examples rather than verbose documentation
+
+### IDE Compatibility
+
+Your existing markdown files work seamlessly with:
+- **VSCode** - Native markdown support with syntax highlighting
+- **IntelliJ IDEA** - Full markdown editing and preview capabilities
+- **Other editors** - Any editor that supports markdown
+
+### Cursor Integration
+
+When using the `.mdc` format, md2llm automatically adds front matter metadata that Cursor uses to:
+- Apply rules contextually
+- Set rule descriptions
+- Configure rule behavior
+
 ## Installation
 
 ```bash
@@ -20,27 +44,26 @@ npm i -g .
 
 ```bash
 # Convert markdown files to .md rules
-md2llm convert ./output ./docs ./src
+md2llm ./output ./docs ./src
 
 # Convert to .mdc format (Cursor rules)
-md2llm convert ./output ./docs --format mdc
+md2llm ./output ./docs --format mdc
 
 # Custom exclude directories
-md2llm convert ./output ./docs --exclude "temp,backup,old"
+md2llm ./output ./docs --exclude "temp,backup,old"
 
 # Custom source URL for links
-md2llm convert ./output ./docs --source-url "https://github.com/user/repo/blob/main/"
+md2llm ./output ./docs --source-url "https://github.com/user/repo/blob/main/"
 
 # Multiple source directories
-md2llm convert ./output ./docs ./src ./examples
+md2llm ./output ./docs ./src ./examples
 ```
 
-## Commands
+## Options
 
-- `convert <dest> <dirs...>` - Convert markdown files to LLM rules
-  - `-f, --format <format>` - Output format (md or mdc), default: md
-  - `-e, --exclude <dirs>` - Comma-separated list of directories to exclude (default: images,node_modules,dist,build,coverage,test,cjs,generator,lib,src)
-  - `-s, --source-url <url>` - Base URL for source links
+- `-f, --format <format>` - Output format (md or mdc), default: md
+- `-e, --exclude <dirs>` - Comma-separated list of directories to exclude (default: images,node_modules,dist,build,coverage,test,cjs,generator,lib,src)
+- `-s, --source-url <url>` - Base URL for source links
 
 ## Features
 

@@ -135,10 +135,10 @@ processConversion('./output', ['./src'], options);
 
 ```bash
 # Basic usage
-md2llm convert ./output ./src
+md2llm ./output ./src
 
 # With options
-md2llm convert ./output ./src --format mdc --exclude node_modules,dist --source-url https://github.com/user/repo/blob/main/
+md2llm ./output ./src --format mdc --exclude node_modules,dist --source-url https://github.com/user/repo/blob/main/
 ```
 
 ## Migration from Legacy Code
@@ -154,4 +154,4 @@ The modular structure makes it easy to add:
 - Custom filtering rules
 - Plugin system for extensibility
 - Better error recovery mechanisms
-- Progress reporting and cancellation 
+- Progress reporting and cancellation

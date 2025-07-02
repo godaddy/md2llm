@@ -34,7 +34,7 @@ describe('CLI Integration', () => {
 
   test('should run CLI and generate expected output', () => {
     // Run the CLI
-    execFileSync('node', [CLI_PATH, 'convert', outputDir, tempDir], { stdio: 'inherit' });
+    execFileSync('node', [CLI_PATH, outputDir, tempDir], { stdio: 'inherit' });
     // Check output file
     const outFile = path.join(outputDir, '@cli', 'test.md');
     assert(fs.existsSync(outFile), 'CLI should create the output file');
@@ -45,7 +45,7 @@ describe('CLI Integration', () => {
   });
 
   test('should support mdc format via CLI', () => {
-    execFileSync('node', [CLI_PATH, 'convert', outputDir, tempDir, '--format', 'mdc'], { stdio: 'inherit' });
+    execFileSync('node', [CLI_PATH, outputDir, tempDir, '--format', 'mdc'], { stdio: 'inherit' });
     const outFile = path.join(outputDir, '@cli', 'test.mdc');
     assert(fs.existsSync(outFile), 'CLI should create the mdc output file');
     const content = fs.readFileSync(outFile, 'utf8');
