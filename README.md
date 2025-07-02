@@ -1,8 +1,14 @@
-# MD2LLM CLI
+# md2llm
 
 A command-line interface for converting markdown files to LLM rules, built with Commander.js.
 
-## Local Installation
+## Installation
+
+```bash
+npm install -g md2llm
+```
+
+## Local Development Installation
 
 ```bash
 npm i -g .
@@ -14,19 +20,19 @@ npm i -g .
 
 ```bash
 # Convert markdown files to .md rules
-node index.js convert ./output ./docs ./src
+md2llm convert ./output ./docs ./src
 
 # Convert to .mdc format (Cursor rules)
-node index.js convert ./output ./docs --format mdc
+md2llm convert ./output ./docs --format mdc
 
 # Custom exclude directories
-node index.js convert ./output ./docs --exclude "temp,backup,old"
+md2llm convert ./output ./docs --exclude "temp,backup,old"
 
 # Custom source URL for links
-node index.js convert ./output ./docs --source-url "https://github.com/user/repo/blob/main/"
+md2llm convert ./output ./docs --source-url "https://github.com/user/repo/blob/main/"
 
 # Multiple source directories
-node index.js convert ./output ./docs ./src ./examples
+md2llm convert ./output ./docs ./src ./examples
 ```
 
 ## Commands
