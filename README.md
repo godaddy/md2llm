@@ -1,5 +1,13 @@
 # md2llm
 
+[![npm version](https://badge.fury.io/js/md2llm.svg)](https://badge.fury.io/js/md2llm)
+[![npm downloads](https://img.shields.io/npm/dm/md2llm.svg)](https://www.npmjs.com/package/md2llm)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen.svg)](https://nodejs.org/)
+[![Test Coverage](https://img.shields.io/badge/coverage-91%25-brightgreen.svg)](https://github.com/godaddy/md2llm)
+
+![md2llm logo](images/md2llm-logo.png)
+
 A command-line interface for converting markdown files to LLM rules, built with Commander.js.
 
 ## Requirements
