@@ -29,6 +29,7 @@ md2llm output-dir src --exclude "node_modules,dist"
 ### Path Separators
 - The tool automatically handles Windows backslashes (`\`) and Unix forward slashes (`/`)
 - All path operations use Node.js built-ins that are cross-platform compatible
+- Path normalization is handled by dedicated utilities in `src/utils/path-utils.js`
 
 ### File Permissions
 - Ensure you have write permissions to the output directory
@@ -60,10 +61,25 @@ md2llm output-dir src --exclude "node_modules,dist"
 
 ## Testing on Windows
 
-Run the Windows-specific test suite:
+The project includes comprehensive cross-platform testing:
+
+### Automated Testing
 ```cmd
 npm run test:windows
 ```
+
+### Manual Testing with Docker
+```bash
+# On Unix/Linux/macOS
+./test-windows.sh
+```
+
+The testing infrastructure includes:
+- Cross-platform path handling tests
+- Windows-style path compatibility verification
+- Package structure validation (ensures `md2llm.cmd` is included)
+- File operation tests with mixed path separators
+- CLI functionality tests with Windows-style arguments
 
 ## Development
 
@@ -71,3 +87,4 @@ When developing on Windows:
 1. Use Git Bash or WSL for Unix-like development experience
 2. Ensure line endings are handled correctly (Git config: `core.autocrlf true`)
 3. Test with both Command Prompt and PowerShell
+4. Run `npm run test:windows` to verify cross-platform compatibility
