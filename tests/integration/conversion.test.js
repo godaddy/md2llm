@@ -197,4 +197,40 @@ echo "Hello from second test"
     const outputFile = path.join(outputDir, 'no-snippets.md');
     assert(!fs.existsSync(outputFile), 'No output file should be created for file without snippets');
   });
+
+  test('should throw error for missing rules directory path', () => {
+    const options = {
+      format: 'md',
+      excludeDirs: ['node_modules']
+    };
+
+    assert.throws(() => {
+      processConversion(null, [tempDir], options);
+    }, /Rules directory path and packages directory paths are required/);
+  });
+
+  test('should throw error for missing packages directory paths', () => {
+    const options = {
+      format: 'md',
+      excludeDirs: ['node_modules']
+    };
+
+    assert.throws(() => {
+      processConversion(outputDir, null, options);
+    }, /Rules directory path and packages directory paths are required/);
+  });
+
+  test('should handle single string path instead of array', () => {
+    const options = {
+      format: 'md',
+      excludeDirs: ['node_modules']
+    };
+
+    // Should not throw error when passing string instead of array
+    processConversion(outputDir, tempDir, options);
+
+    // Check that output was still generated
+    const outputFile = path.join(outputDir, '@test', 'package.md');
+    assert(fs.existsSync(outputFile), 'Output file should exist when passing string path');
+  });
 });

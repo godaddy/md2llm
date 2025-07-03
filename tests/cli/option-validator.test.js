@@ -42,6 +42,28 @@ describe('Option Validator', () => {
     assert.deepStrictEqual(result.excludeDirs, ['test', 'dist', 'coverage']);
   });
 
+  test('should handle exclude string with only whitespace', () => {
+    const result = validateOptions({ exclude: '   ,  ,  ' });
+    // Should return default exclude dirs when only whitespace
+    assert.deepStrictEqual(result.excludeDirs, [
+      'images', 'node_modules', 'dist', 'build', 'coverage', 'test', 'cjs', 'generator', 'lib', 'src'
+    ]);
+  });
+
+  test('should handle null exclude string', () => {
+    const result = validateOptions({ exclude: null });
+    assert.deepStrictEqual(result.excludeDirs, [
+      'images', 'node_modules', 'dist', 'build', 'coverage', 'test', 'cjs', 'generator', 'lib', 'src'
+    ]);
+  });
+
+  test('should handle undefined exclude string', () => {
+    const result = validateOptions({ exclude: undefined });
+    assert.deepStrictEqual(result.excludeDirs, [
+      'images', 'node_modules', 'dist', 'build', 'coverage', 'test', 'cjs', 'generator', 'lib', 'src'
+    ]);
+  });
+
   test('should validate and set source URL', () => {
     const result = validateOptions({ sourceUrl: 'https://github.com/user/repo/blob/main/' });
     assert.strictEqual(result.sourceUrl, 'https://github.com/user/repo/blob/main/');
@@ -58,8 +80,24 @@ describe('Option Validator', () => {
     }, /Invalid source URL: not-a-url/);
   });
 
+  test('should throw error for source URL without protocol', () => {
+    assert.throws(() => {
+      validateOptions({ sourceUrl: 'github.com/user/repo' });
+    }, /Invalid source URL: github\.com\/user\/repo/);
+  });
+
   test('should handle null source URL', () => {
     const result = validateOptions({ sourceUrl: null });
+    assert.strictEqual(result.sourceUrl, null);
+  });
+
+  test('should handle undefined source URL', () => {
+    const result = validateOptions({ sourceUrl: undefined });
+    assert.strictEqual(result.sourceUrl, null);
+  });
+
+  test('should handle empty string source URL', () => {
+    const result = validateOptions({ sourceUrl: '' });
     assert.strictEqual(result.sourceUrl, null);
   });
 
