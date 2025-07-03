@@ -9,7 +9,7 @@ describe('File Collector', () => {
 
   before(async () => {
     // Create temporary test directory structure
-    tempDir = path.join(process.cwd(), 'temp-test-dir');
+    tempDir = 'temp-test-dir';
     fs.mkdirSync(tempDir, { recursive: true });
 
     // Create test files and directories
@@ -81,7 +81,7 @@ describe('File Collector', () => {
     const filePath = path.join(tempDir, 'docs', 'README.md');
     const stats = getFileStats(filePath);
 
-    assert(stats !== null);
+    assert(stats != null);
     assert(stats.isFile());
   });
 

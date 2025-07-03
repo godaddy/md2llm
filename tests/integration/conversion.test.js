@@ -10,8 +10,8 @@ describe('Integration Tests', () => {
 
   before(async () => {
     // Create temporary test directories
-    tempDir = path.join(process.cwd(), 'temp-integration-test');
-    outputDir = path.join(process.cwd(), 'temp-output-test');
+    tempDir = 'temp-integration-test';
+    outputDir = 'temp-output-test';
 
     fs.mkdirSync(tempDir, { recursive: true });
     fs.mkdirSync(outputDir, { recursive: true });
@@ -132,7 +132,7 @@ def hello():
 
   test('should handle multiple input directories', async () => {
     // Create second test directory
-    const tempDir2 = path.join(process.cwd(), 'temp-integration-test-2');
+    const tempDir2 = 'temp-integration-test-2';
     fs.mkdirSync(tempDir2, { recursive: true });
 
     const testMarkdown2 = `# Second Test

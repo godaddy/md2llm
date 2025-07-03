@@ -1,3 +1,4 @@
+/* eslint-disable max-len, max-statements */
 import { test, describe } from 'node:test';
 import assert from 'node:assert';
 import {
@@ -6,8 +7,12 @@ import {
   isValidFormat
 } from '../../src/formatters/output-formatter.js';
 
-describe('Output Formatter', () => {
-  const mockSnippets = [
+/**
+ * Gets mock snippets for testing
+ * @returns {Array} Mock snippets array
+ */
+function getMockSnippets() {
+  return [
     {
       title: 'Test Snippet 1',
       description: 'First test snippet',
@@ -23,34 +28,70 @@ describe('Output Formatter', () => {
       code: 'print("test2")'
     }
   ];
+}
 
-  const mockOutputInfo = {
+/**
+ * Gets mock output info for testing
+ * @returns {Object} Mock output info
+ */
+function getMockOutputInfo() {
+  return {
     outputPath: '/output/test.md',
     outputDir: '/output',
     outputFileName: 'test',
     atTag: 'test',
     source: 'test.md'
   };
+}
+
+/**
+ * Asserts MD format content
+ * @param {string} content - Generated content
+ */
+function assertMdFormat(content) {
+  assert(content.includes('TITLE: Test Snippet 1'));
+  assert(content.includes('TITLE: Test Snippet 2'));
+  assert(content.includes('@test'));
+  // Note: md format doesn't have frontmatter, but the content might contain --- from snippet separators
+  assert(!content.includes('description: test')); // No frontmatter description for md
+}
+
+/**
+ * Asserts MDC format content
+ * @param {string} content - Generated content
+ */
+function assertMdcFormat(content) {
+  assert(content.includes('---'));
+  assert(content.includes('description: test'));
+  assert(content.includes('alwaysApply: true'));
+  assert(content.includes('TITLE: Test Snippet 1'));
+  assert(content.includes('TITLE: Test Snippet 2'));
+  assert(content.includes('@test'));
+}
+
+/**
+ * Asserts incomplete snippets content
+ * @param {string} content - Generated content
+ */
+function assertIncompleteSnippets(content) {
+  assert(content.includes('TITLE: Test Snippet'));
+  assert(content.includes('DESCRIPTION: '));
+  assert(content.includes('SOURCE: '));
+  assert(content.includes('LANGUAGE: text'));
+}
+
+describe('Output Formatter', () => {
+  const mockSnippets = getMockSnippets();
+  const mockOutputInfo = getMockOutputInfo();
 
   test('should generate md format content', () => {
     const content = generateOutputContent(mockSnippets, mockOutputInfo, 'md');
-
-    assert(content.includes('TITLE: Test Snippet 1'));
-    assert(content.includes('TITLE: Test Snippet 2'));
-    assert(content.includes('@test'));
-    // Note: md format doesn't have frontmatter, but the content might contain --- from snippet separators
-    assert(!content.includes('description: test')); // No frontmatter description for md
+    assertMdFormat(content);
   });
 
   test('should generate mdc format content with frontmatter', () => {
     const content = generateOutputContent(mockSnippets, mockOutputInfo, 'mdc');
-
-    assert(content.includes('---'));
-    assert(content.includes('description: test'));
-    assert(content.includes('alwaysApply: true'));
-    assert(content.includes('TITLE: Test Snippet 1'));
-    assert(content.includes('TITLE: Test Snippet 2'));
-    assert(content.includes('@test'));
+    assertMdcFormat(content);
   });
 
   test('should handle empty snippets array', () => {
@@ -72,11 +113,7 @@ describe('Output Formatter', () => {
     ];
 
     const content = generateOutputContent(incompleteSnippets, mockOutputInfo, 'md');
-
-    assert(content.includes('TITLE: Test Snippet'));
-    assert(content.includes('DESCRIPTION: '));
-    assert(content.includes('SOURCE: '));
-    assert(content.includes('LANGUAGE: text'));
+    assertIncompleteSnippets(content);
   });
 
   test('should handle at-tag without @ prefix', () => {
