@@ -22,7 +22,7 @@ export function createDir(dir) {
  * @returns {string} Source URL
  */
 export function getSourceUrl(filePath) {
-  let relToRepo = path.relative(repoRoot, filePath).replace(/\\/g, '/');
+  const relToRepo = path.relative(repoRoot, filePath).replace(/\\/g, '/');
 
   // Use custom source URL if provided
   const customBaseUrl = process.env.SOURCE_BASE_URL;
@@ -30,37 +30,62 @@ export function getSourceUrl(filePath) {
     return `${customBaseUrl}${relToRepo}`;
   }
 
-    // Handle node_modules packages
-  const nodeModulesMatch = relToRepo.match(/^node_modules\/(@[^/]+\/[^/]+|[^/]+)\/(.*)$/);
-  if (nodeModulesMatch) {
-    const packageName = nodeModulesMatch[1];
-    const packageDir = path.join(repoRoot, 'node_modules', packageName);
-    const packageJsonPath = path.join(packageDir, 'package.json');
-
-    if (fs.existsSync(packageJsonPath)) {
-      try {
-        const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-
-        // Return homepage if available
-        if (packageJson.homepage) {
-          return packageJson.homepage;
-        }
-
-        // Fallback to repository URL if no homepage
-        if (packageJson.repository) {
-          let repoUrl = packageJson.repository;
-          if (typeof repoUrl === 'object') {
-            repoUrl = repoUrl.url;
-          }
-          return repoUrl;
-        }
-      } catch (e) {
-        // fallback to default
-      }
-    }
+  // Handle node_modules packages
+  const nodeModulesUrl = getNodeModulesUrl(relToRepo);
+  if (nodeModulesUrl) {
+    return nodeModulesUrl;
   }
 
   return relToRepo;
+}
+
+/**
+ * Gets URL for node_modules packages
+ * @param {string} relToRepo - Relative path to repo
+ * @returns {string|null} Package URL or null
+ */
+function getNodeModulesUrl(relToRepo) {
+  const nodeModulesMatch = relToRepo.match(/^node_modules\/(@[^/]+\/[^/]+|[^/]+)\/(.*)$/);
+  if (!nodeModulesMatch) {
+    return null;
+  }
+
+  const packageName = nodeModulesMatch[1];
+  const packageDir = path.join(repoRoot, 'node_modules', packageName);
+  const packageJsonPath = path.join(packageDir, 'package.json');
+
+  if (!fs.existsSync(packageJsonPath)) {
+    return null;
+  }
+
+  return getPackageUrl(packageJsonPath);
+}
+
+/**
+ * Gets URL from package.json
+ * @param {string} packageJsonPath - Path to package.json
+ * @returns {string|null} Package URL or null
+ */
+function getPackageUrl(packageJsonPath) {
+  try {
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+
+    if (packageJson.homepage) {
+      return packageJson.homepage;
+    }
+
+    if (packageJson.repository) {
+      let repoUrl = packageJson.repository;
+      if (typeof repoUrl === 'object') {
+        repoUrl = repoUrl.url;
+      }
+      return repoUrl;
+    }
+  } catch (e) {
+    // fallback to default
+  }
+
+  return null;
 }
 
 /**
