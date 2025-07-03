@@ -3,7 +3,7 @@ import path from 'path';
 
 /**
  * Source URL Manager
- * 
+ *
  * Handles generation of source URLs for files and extraction of package information.
  * Manages both custom source URLs and automatic package repository detection.
  */
@@ -52,9 +52,23 @@ function getRelativePath(filePath) {
  * @returns {string|null} Source URL or null if not a node_modules file
  */
 function getNodeModulesSourceUrl(filePath) {
+  const packageInfo = extractPackageInfo(filePath);
+  if (!packageInfo) {
+    return null;
+  }
+
+  return getPackageSourceUrl(packageInfo.packageJsonPath);
+}
+
+/**
+ * Extracts package information from file path
+ * @param {string} filePath - Path to the file
+ * @returns {Object|null} Package info or null if not a node_modules file
+ */
+function extractPackageInfo(filePath) {
   const relativePath = getRelativePath(filePath);
   const nodeModulesMatch = relativePath.match(/^node_modules\/(@[^/]+\/[^/]+|[^/]+)\/(.*)$/);
-  
+
   if (!nodeModulesMatch) {
     return null;
   }
@@ -67,15 +81,22 @@ function getNodeModulesSourceUrl(filePath) {
     return null;
   }
 
+  return { packageJsonPath };
+}
+
+/**
+ * Gets source URL from package.json
+ * @param {string} packageJsonPath - Path to package.json
+ * @returns {string|null} Source URL or null
+ */
+function getPackageSourceUrl(packageJsonPath) {
   try {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-    
-    // Return homepage if available
+
     if (packageJson.homepage) {
       return packageJson.homepage;
     }
 
-    // Fallback to repository URL
     if (packageJson.repository) {
       const repoUrl = extractRepositoryUrl(packageJson.repository);
       if (repoUrl) {
@@ -144,4 +165,4 @@ export function readPackageJson(packageJsonPath) {
   } catch (error) {
     return null;
   }
-} 
+}

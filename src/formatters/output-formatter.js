@@ -1,4 +1,3 @@
-import path from 'path';
 import { formatSnippet } from '../processors/snippet-extractor.js';
 
 /**
@@ -43,7 +42,7 @@ export function generateOutputContent(snippets, outputInfo, format) {
  * @returns {string} MDC frontmatter string
  */
 function generateMdcFrontmatter(outputInfo) {
-  const description = extractDescriptionFromOutputInfo(outputInfo);
+  const description = extractDescription(outputInfo);
 
   return [
     '---',
@@ -59,7 +58,7 @@ function generateMdcFrontmatter(outputInfo) {
  * @param {Object} outputInfo - Output file information
  * @returns {string} Description for frontmatter
  */
-function extractDescriptionFromOutputInfo(outputInfo) {
+function extractDescription(outputInfo) {
   // For now, use the output filename as description
   // This could be enhanced to extract from the first snippet or file content
   return outputInfo.outputFileName || 'Generated LLM rules';

@@ -1,9 +1,9 @@
 import fs from 'fs';
-import path from 'path';
+import { normalizePath, joinPaths, getPathSeparator } from './path-utils.js';
 
 /**
  * Directory Manager
- * 
+ *
  * Handles directory creation and path operations for the conversion process.
  * Manages output directory structure and ensures proper directory hierarchy.
  */
@@ -24,7 +24,7 @@ export function createOutputDirectories(rulesDirPath, packagesDirPaths) {
   // Create package-specific directories
   packagesDirPaths.forEach(packageDirPath => {
     const scopedDir = extractPackageName(packageDirPath);
-    const fullPath = path.join(rulesDirPath, scopedDir);
+    const fullPath = joinPaths(rulesDirPath, scopedDir);
     createDirectory(fullPath);
   });
 }
@@ -61,9 +61,9 @@ function extractPackageName(packageDirPath) {
   }
 
   // Handle both absolute and relative paths
-  const normalizedPath = path.normalize(packageDirPath);
-  const pathParts = normalizedPath.split(path.sep);
-  
+  const normalizedPath = normalizePath(packageDirPath);
+  const pathParts = normalizedPath.split(getPathSeparator());
+
   // Return the last non-empty part
   for (let i = pathParts.length - 1; i >= 0; i--) {
     if (pathParts[i]) {
@@ -81,4 +81,4 @@ function extractPackageName(packageDirPath) {
  */
 export function ensureDirectoryExists(dirPath) {
   return createDirectory(dirPath);
-} 
+}

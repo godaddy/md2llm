@@ -30,7 +30,13 @@ export function extractSnippetsFromTokens(tokens, filePath) {
 
     // Extract code snippets from fence tokens
     if (token.type === 'fence') {
-      const snippet = extractSnippetFromToken(token, tokens, i, lastHeading, snippetCount, filePath);
+      const snippet = extractSnippetFromToken(token, {
+        tokens,
+        tokenIndex: i,
+        lastHeading,
+        snippetCount,
+        filePath
+      });
       if (snippet) {
         snippets.push(snippet);
         snippetCount++;
@@ -57,18 +63,20 @@ function extractHeadingText(tokens, headingIndex) {
 /**
  * Extracts a single snippet from a fence token
  * @param {Object} fenceToken - The fence token containing code
- * @param {Array} tokens - All markdown tokens for context
- * @param {number} tokenIndex - Index of the fence token
- * @param {string} lastHeading - Last heading text for title
- * @param {number} snippetCount - Current snippet number
- * @param {string} filePath - Source file path
+ * @param {Object} options - Options object containing context
+ * @param {Array} options.tokens - All markdown tokens for context
+ * @param {number} options.tokenIndex - Index of the fence token
+ * @param {string} options.lastHeading - Last heading text for title
+ * @param {number} options.snippetCount - Current snippet number
+ * @param {string} options.filePath - Source file path
  * @returns {Object|null} Snippet object or null if invalid
  */
-function extractSnippetFromToken(fenceToken, tokens, tokenIndex, lastHeading, snippetCount, filePath) {
+function extractSnippetFromToken(fenceToken, options) {
   if (!fenceToken || !fenceToken.content) {
     return null;
   }
 
+  const { tokens, tokenIndex, lastHeading, snippetCount, filePath } = options;
   const title = lastHeading || `Snippet ${snippetCount}`;
   const language = fenceToken.info || 'text';
   const code = fenceToken.content;

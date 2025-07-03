@@ -25,7 +25,9 @@ export function setupCommands() {
     .argument('<dest>', 'Destination directory for output files')
     .argument('<dirs...>', 'Source directories containing markdown files')
     .option('-f, --format <format>', 'Output format (md or mdc)', 'md')
-    .option('-e, --exclude <dirs>', 'Comma-separated list of directories to exclude', 'images,node_modules,dist,build,coverage,test,cjs,generator,lib,src')
+    .option('-e, --exclude <dirs>',
+      'Comma-separated list of directories to exclude',
+      'images,node_modules,dist,build,coverage,test,cjs,generator,lib,src')
     .option('-s, --source-url <url>', 'Base URL for source links (e.g., https://github.com/user/repo/blob/main/)')
     .action(handleConvertCommand);
 
@@ -57,6 +59,6 @@ function handleConvertCommand(dest, dirs, options) {
 
   } catch (error) {
     console.error('Error during conversion:', error.message);
-    process.exit(1);
+    throw error;
   }
 }

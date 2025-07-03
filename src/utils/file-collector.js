@@ -3,7 +3,7 @@ import path from 'path';
 
 /**
  * File Collector
- * 
+ *
  * Handles discovery and collection of markdown files from specified directories.
  * Implements recursive directory traversal with exclusion filtering.
  */
@@ -24,29 +24,36 @@ export function collectMarkdownFiles(dirs, excludeDirs = []) {
   const normalizedExcludeDirs = excludeDirs.map(dir => dir.toLowerCase());
 
   for (const dir of dirs) {
-    try {
-      const stat = fs.statSync(dir);
-      
-      if (stat.isFile()) {
-        // Handle single file input
-        if (isMarkdownFile(dir)) {
-          results.push(dir);
-        }
-        continue;
-      }
-
-      if (stat.isDirectory()) {
-        // Recursively search directory
-        const files = searchDirectory(dir, normalizedExcludeDirs);
-        results.push(...files);
-      }
-    } catch (error) {
-      // Log warning but continue processing other directories
-      console.warn(`Warning: Could not access ${dir}: ${error.message}`);
-    }
+    const files = processDirectory(dir, normalizedExcludeDirs);
+    results.push(...files);
   }
 
   return results;
+}
+
+/**
+ * Processes a single directory or file
+ * @param {string} dir - Directory or file path
+ * @param {string[]} excludeDirs - Normalized exclude directories
+ * @returns {string[]} Array of markdown file paths
+ */
+function processDirectory(dir, excludeDirs) {
+  try {
+    const stat = fs.statSync(dir);
+
+    if (stat.isFile()) {
+      return isMarkdownFile(dir) ? [dir] : [];
+    }
+
+    if (stat.isDirectory()) {
+      return searchDirectory(dir, excludeDirs);
+    }
+
+    return [];
+  } catch (error) {
+    console.warn(`Warning: Could not access ${dir}: ${error.message}`);
+    return [];
+  }
 }
 
 /**
@@ -118,5 +125,5 @@ export function getFileStats(filePath) {
  * @returns {boolean} True if path exists and is accessible
  */
 export function pathExists(filePath) {
-  return getFileStats(filePath) !== null;
-} 
+  return getFileStats(filePath) != null;
+}
