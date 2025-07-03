@@ -2,6 +2,11 @@
 
 A command-line interface for converting markdown files to LLM rules, built with Commander.js.
 
+## Requirements
+
+- Node.js 20 or greater required
+- Node.js 22+ recommended (uses latest APIs)
+
 ## What is md2llm?
 
 md2llm extracts **code examples** from your markdown documentation and converts them into LLM rules. Unlike sending entire documentation files to LLMs, this tool focuses on the most valuable content: **working code examples**.
