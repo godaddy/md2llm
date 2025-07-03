@@ -1,0 +1,14 @@
+FROM node:20-alpine
+
+# Install basic tools
+RUN apk add --no-cache bash
+
+# Copy project files
+WORKDIR /app
+COPY . .
+
+# Install dependencies
+RUN npm ci
+
+# Test script that simulates Windows path handling
+CMD ["node", "test-cross-platform.js"] 
