@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { setupCommands } from './src/cli/command-handler.js';
+import { setupCommands } from '../src/cli/command-handler.js';
 
 /**
  * md2llm - A CLI tool for converting markdown to LLM rules

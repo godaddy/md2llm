@@ -2,15 +2,25 @@
   "name": "md2llm",
   "version": "0.0.7",
   "description": "A CLI tool for converting markdown to LLM rules",
-  "main": "index.js",
+  "main": "bin/md2llm.js",
   "type": "module",
   "bin": {
-    "md2llm": "./index.js"
+    "md2llm": "./bin/md2llm.js",
+    "md2llm.cmd": "./bin/md2llm.cmd"
   },
+  "files": [
+    "bin/",
+    "src/",
+    "utils/",
+    "WINDOWS.md",
+    "README.md"
+  ],
   "scripts": {
+    "lint": "eslint .",
     "test": "node --test",
     "test:watch": "node --test --watch",
     "test:coverage": "c8 node --test",
+    "test:windows": "node --test",
     "prepublishOnly": "npm test",
     "pack": "npm pack"
   },
@@ -38,6 +48,33 @@
     "markdown-it": "^14.0.0"
   },
   "devDependencies": {
-    "c8": "^9.1.0"
+    "c8": "^9.1.0",
+    "eslint": "^8.57.1",
+    "eslint-config-godaddy": "^7.1.1",
+    "eslint-plugin-jsdoc": "^48.11.0",
+    "eslint-plugin-unicorn": "^55.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "godaddy"
+    ],
+    "ignorePatterns": [
+      "node_modules/",
+      "coverage/"
+    ],
+    "plugins": [
+      "unicorn",
+      "jsdoc"
+    ],
+    "rules": {
+      "unicorn/filename-case": "error",
+      "no-sync": "off",
+      "no-console": "off",
+      "no-continue": "off",
+      "no-process-env": "off"
+    }
+  },
+  "engines": {
+    "node": ">=20.0.0"
   }
 }
