@@ -26,6 +26,41 @@ When using the `.mdc` format, md2llm automatically adds front matter metadata th
 - Set rule descriptions
 - Configure rule behavior
 
+### IDE-Specific Setups
+
+md2llm generates markdown files that can be referenced by IDE-specific instruction files:
+
+#### IntelliJ IDEA with Junie
+- **Location**: `.junie/guidelines.md`
+- **Usage**: Junie reads coding guidelines from this file
+- **Integration**: Link to generated rules from your guidelines file
+
+#### GitHub Copilot
+- **Location**: `.github/copilot-instructions`
+- **Usage**: Copilot uses these instructions for project-specific guidance
+- **Integration**: Reference generated rules from your Copilot instruction file
+
+#### Claude Desktop
+- **Location**: `CLAUDE.md` (project root)
+- **Usage**: Claude reads project context from this file
+- **Integration**: Link to generated rules from your CLAUDE.md file
+
+**Example workflow:**
+```bash
+# Generate rules first
+md2llm ./rules ./docs --source-url "https://github.com/user/repo/blob/main/"
+
+# Then reference them in your IDE files:
+# .junie/guidelines.md:
+# See our coding patterns: ./rules/function-patterns.md
+
+# .github/copilot-instructions:
+# Follow examples in: ./rules/api-examples.md
+
+# CLAUDE.md:
+# Check our guidelines: ./rules/component-patterns.md
+```
+
 ## Installation
 
 ```bash
