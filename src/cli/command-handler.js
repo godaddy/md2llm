@@ -29,6 +29,9 @@ export function setupCommands() {
       'Comma-separated list of directories to exclude',
       'images,node_modules,dist,build,coverage,test,cjs,generator,lib,src')
     .option('-s, --source-url <url>', 'Base URL for source links (e.g., https://github.com/user/repo/blob/main/)')
+    .option('--always-apply', 'Set alwaysApply: true in mdc frontmatter (default for mdc format)')
+    .option('--no-always-apply', 'Set alwaysApply: false in mdc frontmatter')
+    .option('--apply-glob <pattern>', 'Use glob pattern instead of alwaysApply in mdc frontmatter')
     .action(handleConvertCommand);
 
   return program;

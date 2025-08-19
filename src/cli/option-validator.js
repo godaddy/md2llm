@@ -11,7 +11,9 @@
 const DEFAULTS = {
   format: 'md',
   excludeDirs: ['images', 'node_modules', 'dist', 'build', 'coverage', 'test', 'cjs', 'generator', 'lib', 'src'],
-  sourceUrl: null
+  sourceUrl: null,
+  alwaysApply: null, // null means use format default (true for mdc, n/a for md)
+  applyGlob: null
 };
 
 /**
@@ -45,6 +47,9 @@ export function validateOptions(options) {
   if (options.sourceUrl) {
     validated.sourceUrl = validateSourceUrl(options.sourceUrl);
   }
+
+  // Validate and set mdc rule options
+  validateMdcOptions(options, validated);
 
   return validated;
 }
@@ -85,4 +90,32 @@ function validateSourceUrl(url) {
 
   // Ensure URL ends with / for proper path joining
   return url.endsWith('/') ? url : `${url}/`;
+}
+
+/**
+ * Validates and sets MDC rule configuration options
+ * @param {Object} options - Raw CLI options
+ * @param {Object} validated - Validated options object to modify
+ * @throws {Error} If options are invalid
+ */
+function validateMdcOptions(options, validated) {
+  // Handle alwaysApply option
+  if (options.alwaysApply === true) {
+    validated.alwaysApply = true;
+  } else if (options.alwaysApply === false) {
+    validated.alwaysApply = false;
+  }
+
+  // Handle applyGlob option
+  if (options.applyGlob !== undefined) {
+    if (typeof options.applyGlob !== 'string' || options.applyGlob.trim().length === 0) {
+      throw new Error('Invalid apply-glob pattern: must be a non-empty string');
+    }
+    validated.applyGlob = options.applyGlob.trim();
+  }
+
+  // Validate that alwaysApply and applyGlob are mutually exclusive
+  if (validated.alwaysApply !== null && validated.applyGlob) {
+    throw new Error('Cannot use both --always-apply/--no-always-apply and --apply-glob options together');
+  }
 }

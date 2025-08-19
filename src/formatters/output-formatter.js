@@ -12,9 +12,10 @@ import { formatSnippet } from '../processors/snippet-extractor.js';
  * @param {Array} snippets - Array of snippet objects
  * @param {Object} outputInfo - Output file information
  * @param {string} format - Output format ('md' or 'mdc')
+ * @param {Object} [options] - Additional options for content generation
  * @returns {string} Formatted output content
  */
-export function generateOutputContent(snippets, outputInfo, format) {
+export function generateOutputContent(snippets, outputInfo, format, options = {}) {
   if (!snippets || snippets.length === 0) {
     return '';
   }
@@ -23,7 +24,7 @@ export function generateOutputContent(snippets, outputInfo, format) {
 
   // Add format-specific frontmatter
   if (format === 'mdc') {
-    content += generateMdcFrontmatter(outputInfo);
+    content += generateMdcFrontmatter(outputInfo, options);
   }
 
   // Add formatted snippets
@@ -39,18 +40,27 @@ export function generateOutputContent(snippets, outputInfo, format) {
 /**
  * Generates MDC frontmatter
  * @param {Object} outputInfo - Output file information
+ * @param {Object} [options] - Options for frontmatter generation
  * @returns {string} MDC frontmatter string
  */
-function generateMdcFrontmatter(outputInfo) {
+function generateMdcFrontmatter(outputInfo, options = {}) {
   const description = extractDescription(outputInfo);
+  const frontmatterLines = [
+    '---',
+    `description: ${description}`
+  ];
 
-  return [
-    '---',
-    `description: ${description}`,
-    'alwaysApply: true',
-    '---',
-    ''
-  ].join('\n');
+  // Add application rules based on options
+  if (options.applyGlob) {
+    frontmatterLines.push(`glob: "${options.applyGlob}"`);
+  } else {
+    // Use alwaysApply - default to true if not explicitly set to false
+    const alwaysApply = options.alwaysApply !== false;
+    frontmatterLines.push(`alwaysApply: ${alwaysApply}`);
+  }
+
+  frontmatterLines.push('---', '');
+  return frontmatterLines.join('\n');
 }
 
 /**

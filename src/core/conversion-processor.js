@@ -1,6 +1,7 @@
-import { createOutputDirectories } from '../utils/directory-manager.js';
+import { createDirectory } from '../utils/directory-manager.js';
 import { collectMarkdownFiles } from '../utils/file-collector.js';
-import { processMarkdownFile } from '../processors/markdown-processor.js';
+import { processMarkdownFile, processPackageMarkdownFiles } from '../processors/markdown-processor.js';
+import { groupFilesByPackage } from '../utils/package-grouper.js';
 
 /**
  * Conversion Processor
@@ -27,15 +28,24 @@ export function processConversion(rulesDirPath, packagesDirPaths, options) {
   // Normalize packagesDirPaths to array
   const paths = Array.isArray(packagesDirPaths) ? packagesDirPaths : [packagesDirPaths];
 
-  // Create output directories for each package
-  createOutputDirectories(rulesDirPath, paths);
+  // Create base output directory only
+  createDirectory(rulesDirPath);
 
   // Collect and filter markdown files
   const filteredFiles = getFilteredFiles(paths, options.excludeDirs);
   console.log(`Found ${filteredFiles.length} documentation files to process`);
 
-  // Process files and get results
-  const results = processFiles(filteredFiles, rulesDirPath, options.format);
+  // Group files by package context
+  const { packageGroups, standaloneFiles } = groupFilesByPackage(filteredFiles);
+  console.log(`Found ${packageGroups.length} packages and ${standaloneFiles.length} standalone files`);
+
+  // Process grouped files and get results
+  const results = processGroupedFiles(packageGroups, standaloneFiles, rulesDirPath, options);
+
+  // Check for errors and fail if any occurred
+  if (results.errorCount > 0) {
+    throw new Error(`Conversion failed with ${results.errorCount} errors`);
+  }
 
   // Log completion summary
   logCompletionSummary(results, rulesDirPath);
@@ -53,19 +63,32 @@ function getFilteredFiles(paths, excludeDirs) {
 }
 
 /**
- * Processes markdown files and returns results
- * @param {string[]} files - Files to process
+ * Processes grouped files and returns results
+ * @param {Array} packageGroups - Grouped package files
+ * @param {string[]} standaloneFiles - Standalone files to process
  * @param {string} rulesDirPath - Output directory
- * @param {string} format - Output format
+ * @param {Object} options - Conversion options
  * @returns {Object} Processing results
  */
-function processFiles(files, rulesDirPath, format) {
+function processGroupedFiles(packageGroups, standaloneFiles, rulesDirPath, options) {
   let processedCount = 0;
   let errorCount = 0;
 
-  for (const filePath of files) {
+  // Process package groups
+  for (const packageGroup of packageGroups) {
     try {
-      processMarkdownFile(filePath, rulesDirPath, format);
+      processPackageMarkdownFiles(packageGroup, rulesDirPath, options);
+      processedCount += packageGroup.files.length;
+    } catch (error) {
+      console.error(`Error processing package ${packageGroup.packageInfo.packageJson.name}:`, error.message);
+      errorCount += packageGroup.files.length;
+    }
+  }
+
+  // Process standalone files
+  for (const filePath of standaloneFiles) {
+    try {
+      processMarkdownFile(filePath, rulesDirPath, options);
       processedCount++;
     } catch (error) {
       console.error(`Error processing ${filePath}:`, error.message);

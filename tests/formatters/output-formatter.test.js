@@ -89,9 +89,37 @@ describe('Output Formatter', () => {
     assertMdFormat(content);
   });
 
-  test('should generate mdc format content with frontmatter', () => {
+  test('should generate mdc format content with default frontmatter', () => {
     const content = generateOutputContent(mockSnippets, mockOutputInfo, 'mdc');
     assertMdcFormat(content);
+  });
+
+  test('should generate mdc format content with alwaysApply: false', () => {
+    const content = generateOutputContent(mockSnippets, mockOutputInfo, 'mdc', { alwaysApply: false });
+    assert(content.includes('---'));
+    assert(content.includes('description: test'));
+    assert(content.includes('alwaysApply: false'));
+    assert(content.includes('TITLE: Test Snippet 1'));
+    assert(content.includes('@test'));
+  });
+
+  test('should generate mdc format content with applyGlob', () => {
+    const content = generateOutputContent(mockSnippets, mockOutputInfo, 'mdc', { applyGlob: '**/*.js' });
+    assert(content.includes('---'));
+    assert(content.includes('description: test'));
+    assert(content.includes('glob: "**/*.js"'));
+    assert(!content.includes('alwaysApply'));
+    assert(content.includes('TITLE: Test Snippet 1'));
+    assert(content.includes('@test'));
+  });
+
+  test('should generate mdc format content with explicit alwaysApply: true', () => {
+    const content = generateOutputContent(mockSnippets, mockOutputInfo, 'mdc', { alwaysApply: true });
+    assert(content.includes('---'));
+    assert(content.includes('description: test'));
+    assert(content.includes('alwaysApply: true'));
+    assert(content.includes('TITLE: Test Snippet 1'));
+    assert(content.includes('@test'));
   });
 
   test('should handle empty snippets array', () => {
