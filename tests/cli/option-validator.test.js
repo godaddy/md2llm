@@ -11,6 +11,8 @@ describe('Option Validator', () => {
       'images', 'node_modules', 'dist', 'build', 'coverage', 'test', 'cjs', 'generator', 'lib', 'src'
     ]);
     assert.strictEqual(result.sourceUrl, null);
+    assert.strictEqual(result.alwaysApply, null);
+    assert.strictEqual(result.applyGlob, null);
   });
 
   test('should validate and set format option', () => {
@@ -111,5 +113,61 @@ describe('Option Validator', () => {
     assert.strictEqual(result.format, 'mdc');
     assert.deepStrictEqual(result.excludeDirs, ['test', 'dist']);
     assert.strictEqual(result.sourceUrl, 'https://github.com/user/repo/blob/main/');
+  });
+
+  test('should validate and set alwaysApply option to true', () => {
+    const result = validateOptions({ alwaysApply: true });
+    assert.strictEqual(result.alwaysApply, true);
+  });
+
+  test('should validate and set alwaysApply option to false', () => {
+    const result = validateOptions({ alwaysApply: false });
+    assert.strictEqual(result.alwaysApply, false);
+  });
+
+  test('should validate and set applyGlob option', () => {
+    const result = validateOptions({ applyGlob: '**/*.js' });
+    assert.strictEqual(result.applyGlob, '**/*.js');
+  });
+
+  test('should trim applyGlob option', () => {
+    const result = validateOptions({ applyGlob: '  **/*.js  ' });
+    assert.strictEqual(result.applyGlob, '**/*.js');
+  });
+
+  test('should throw error for empty applyGlob', () => {
+    assert.throws(() => {
+      validateOptions({ applyGlob: '' });
+    }, /Invalid apply-glob pattern: must be a non-empty string/);
+  });
+
+  test('should throw error for whitespace-only applyGlob', () => {
+    assert.throws(() => {
+      validateOptions({ applyGlob: '   ' });
+    }, /Invalid apply-glob pattern: must be a non-empty string/);
+  });
+
+  test('should throw error for non-string applyGlob', () => {
+    assert.throws(() => {
+      validateOptions({ applyGlob: 123 });
+    }, /Invalid apply-glob pattern: must be a non-empty string/);
+  });
+
+  test('should throw error when both alwaysApply and applyGlob are set', () => {
+    assert.throws(() => {
+      validateOptions({ alwaysApply: true, applyGlob: '**/*.js' });
+    }, /Cannot use both --always-apply\/--no-always-apply and --apply-glob options together/);
+  });
+
+  test('should throw error when alwaysApply false and applyGlob are set', () => {
+    assert.throws(() => {
+      validateOptions({ alwaysApply: false, applyGlob: '**/*.js' });
+    }, /Cannot use both --always-apply\/--no-always-apply and --apply-glob options together/);
+  });
+
+  test('should handle null alwaysApply with applyGlob', () => {
+    const result = validateOptions({ applyGlob: '**/*.js' });
+    assert.strictEqual(result.alwaysApply, null);
+    assert.strictEqual(result.applyGlob, '**/*.js');
   });
 });

@@ -40,7 +40,7 @@ export function processConversion(rulesDirPath, packagesDirPaths, options) {
   console.log(`Found ${packageGroups.length} packages and ${standaloneFiles.length} standalone files`);
 
   // Process grouped files and get results
-  const results = processGroupedFiles(packageGroups, standaloneFiles, rulesDirPath, options.format);
+  const results = processGroupedFiles(packageGroups, standaloneFiles, rulesDirPath, options);
 
   // Check for errors and fail if any occurred
   if (results.errorCount > 0) {
@@ -67,17 +67,17 @@ function getFilteredFiles(paths, excludeDirs) {
  * @param {Array} packageGroups - Grouped package files
  * @param {string[]} standaloneFiles - Standalone files to process
  * @param {string} rulesDirPath - Output directory
- * @param {string} format - Output format
+ * @param {Object} options - Conversion options
  * @returns {Object} Processing results
  */
-function processGroupedFiles(packageGroups, standaloneFiles, rulesDirPath, format) {
+function processGroupedFiles(packageGroups, standaloneFiles, rulesDirPath, options) {
   let processedCount = 0;
   let errorCount = 0;
 
   // Process package groups
   for (const packageGroup of packageGroups) {
     try {
-      processPackageMarkdownFiles(packageGroup, rulesDirPath, format);
+      processPackageMarkdownFiles(packageGroup, rulesDirPath, options);
       processedCount += packageGroup.files.length;
     } catch (error) {
       console.error(`Error processing package ${packageGroup.packageInfo.packageJson.name}:`, error.message);
@@ -88,7 +88,7 @@ function processGroupedFiles(packageGroups, standaloneFiles, rulesDirPath, forma
   // Process standalone files
   for (const filePath of standaloneFiles) {
     try {
-      processMarkdownFile(filePath, rulesDirPath, format);
+      processMarkdownFile(filePath, rulesDirPath, options);
       processedCount++;
     } catch (error) {
       console.error(`Error processing ${filePath}:`, error.message);
