@@ -213,7 +213,7 @@ describe('CLI Integration', () => {
       // Make output directory read-only
       fs.chmodSync(outputDir, 0o444);
 
-      createTestFile('README.md', '# Test\n\nTest content.\n');
+      createTestFile('README.md', '# Test\n\n```js\nconsole.log("test");\n```\n');
       createTestFile('package.json', JSON.stringify({ name: '@test/readonly', version: '1.0.0' }, null, 2));
 
       const result = runCLI([outputDir, tempDir], false);

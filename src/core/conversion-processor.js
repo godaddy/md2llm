@@ -1,4 +1,4 @@
-import { createOutputDirectories } from '../utils/directory-manager.js';
+import { createDirectory } from '../utils/directory-manager.js';
 import { collectMarkdownFiles } from '../utils/file-collector.js';
 import { processMarkdownFile, processPackageMarkdownFiles } from '../processors/markdown-processor.js';
 import { groupFilesByPackage } from '../utils/package-grouper.js';
@@ -28,8 +28,8 @@ export function processConversion(rulesDirPath, packagesDirPaths, options) {
   // Normalize packagesDirPaths to array
   const paths = Array.isArray(packagesDirPaths) ? packagesDirPaths : [packagesDirPaths];
 
-  // Create output directories for each package
-  createOutputDirectories(rulesDirPath, paths);
+  // Create base output directory only
+  createDirectory(rulesDirPath);
 
   // Collect and filter markdown files
   const filteredFiles = getFilteredFiles(paths, options.excludeDirs);
@@ -41,6 +41,11 @@ export function processConversion(rulesDirPath, packagesDirPaths, options) {
 
   // Process grouped files and get results
   const results = processGroupedFiles(packageGroups, standaloneFiles, rulesDirPath, options.format);
+
+  // Check for errors and fail if any occurred
+  if (results.errorCount > 0) {
+    throw new Error(`Conversion failed with ${results.errorCount} errors`);
+  }
 
   // Log completion summary
   logCompletionSummary(results, rulesDirPath);
