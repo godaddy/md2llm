@@ -5,6 +5,7 @@ import { getSourceUrl, getScopeAndName, readPackageJson } from '../utils/source-
 import { createDirectory } from '../utils/directory-manager.js';
 import { generateOutputContent } from '../formatters/output-formatter.js';
 import { extractSnippetsFromTokens } from './snippet-extractor.js';
+import { hasMultipleMarkdownFiles, getReadmeFile, getNonReadmeFiles } from '../utils/package-grouper.js';
 
 /**
  * Markdown Processor
@@ -145,4 +146,109 @@ function writeOutputFile(outputPath, content) {
   } catch (error) {
     throw new Error(`Failed to write output file ${outputPath}: ${error.message}`);
   }
+}
+
+/**
+ * Processes multiple markdown files from a package
+ * @param {Object} packageGroup - Package group containing multiple files
+ * @param {string} rulesDir - Output directory for generated files
+ * @param {string} format - Output format ('md' or 'mdc')
+ */
+export function processPackageMarkdownFiles(packageGroup, rulesDir, format = 'md') {
+  if (!packageGroup || !rulesDir) {
+    throw new Error('Package group and rules directory are required');
+  }
+
+  const { packageInfo, files } = packageGroup;
+  const packageJson = packageInfo.packageJson;
+
+  // If only one file (README.md), use existing single-file logic
+  if (!hasMultipleMarkdownFiles(packageGroup)) {
+    const singleFile = files[0];
+    processMarkdownFile(singleFile, rulesDir, format);
+    return;
+  }
+
+  // Multiple files - create directory structure
+  console.log(`Processing ${files.length} markdown files for package ${packageJson.name}`);
+
+  // Determine package output directory
+  const packageOutputInfo = determinePackageOutputInfo(packageJson, rulesDir, format);
+  createDirectory(packageOutputInfo.packageDir);
+
+  // Process each file in the package
+  let totalSnippets = 0;
+  for (const filePath of files) {
+    const snippetCount = processFileInPackageDirectory(filePath, packageOutputInfo, format);
+    totalSnippets += snippetCount;
+  }
+
+  console.log(`Wrote ${totalSnippets} total snippets for package ${packageJson.name} to ${packageOutputInfo.packageDir}`);
+}
+
+/**
+ * Determines output directory information for a package with multiple files
+ * @param {Object} packageJson - Package.json content
+ * @param {string} rulesDir - Base rules directory
+ * @param {string} format - Output format
+ * @returns {Object} Package output information
+ */
+function determinePackageOutputInfo(packageJson, rulesDir, format) {
+  const packageInfo = getScopeAndName(packageJson.name);
+  let packageDir = rulesDir;
+
+  if (packageInfo.scope) {
+    packageDir = path.join(rulesDir, packageInfo.scope, packageInfo.name);
+  } else {
+    packageDir = path.join(rulesDir, packageInfo.name);
+  }
+
+  return {
+    packageDir,
+    packageName: packageInfo.name,
+    packageScope: packageInfo.scope,
+    format
+  };
+}
+
+/**
+ * Processes a single file within a package directory structure
+ * @param {string} filePath - Path to markdown file
+ * @param {Object} packageOutputInfo - Package output information
+ * @param {string} format - Output format
+ * @returns {number} Number of snippets processed
+ */
+function processFileInPackageDirectory(filePath, packageOutputInfo, format) {
+  // Read and parse markdown file
+  const markdownContent = readMarkdownFile(filePath);
+  const tokens = md.parse(markdownContent, {});
+
+  // Extract snippets from parsed tokens
+  const snippets = extractSnippetsFromTokens(tokens, filePath);
+
+  if (snippets.length === 0) {
+    console.log(`No snippets found in ${filePath}`);
+    return 0;
+  }
+
+  // Determine output file name based on original file
+  const fileNameWithoutExt = path.basename(filePath, '.md');
+  const outputExt = format === 'mdc' ? '.mdc' : '.md';
+  const outputFileName = `${fileNameWithoutExt}${outputExt}`;
+  const outputPath = path.join(packageOutputInfo.packageDir, outputFileName);
+
+  const outputInfo = {
+    outputPath,
+    outputDir: packageOutputInfo.packageDir,
+    outputFileName: fileNameWithoutExt,
+    atTag: fileNameWithoutExt,
+    source: getSourceUrl(filePath)
+  };
+
+  // Generate and write output content
+  const outputContent = generateOutputContent(snippets, outputInfo, format);
+  writeOutputFile(outputPath, outputContent);
+
+  console.log(`  Wrote ${snippets.length} snippets from ${path.basename(filePath)} to ${outputFileName}`);
+  return snippets.length;
 }

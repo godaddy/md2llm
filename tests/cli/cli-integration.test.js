@@ -279,7 +279,9 @@ describe('CLI Integration', () => {
       const result = runCLI([outputDir, tempDir]);
 
       assert.strictEqual(result.status, 0, 'CLI should exit successfully');
-      assertFileExistsAndContains(path.join(outputDir, '@test', 'special-chars.md'), 'TITLE: Special Chars Test');
+      // With multiple markdown files, a directory structure should be created
+      assertFileExistsAndContains(path.join(outputDir, '@test', 'special-chars', 'README.md'), 'TITLE: Special Chars Test');
+      assertFileExistsAndContains(path.join(outputDir, '@test', 'special-chars', 'test-file_with.dots.md'), 'TITLE: Test File');
     });
 
     test('should handle nested directory structures', () => {
@@ -318,7 +320,10 @@ describe('CLI Integration', () => {
       const result = runCLI([outputDir, tempDir]);
 
       assert.strictEqual(result.status, 0, 'CLI should handle many files');
-      assertFileExistsAndContains(path.join(outputDir, '@test', 'many.md'), 'TITLE: Main Test');
+      // With multiple markdown files, a directory structure should be created
+      assertFileExistsAndContains(path.join(outputDir, '@test', 'many', 'README.md'), 'TITLE: Main Test');
+      assertFileExistsAndContains(path.join(outputDir, '@test', 'many', 'file1.md'), 'TITLE: File 1');
+      assertFileExistsAndContains(path.join(outputDir, '@test', 'many', 'file10.md'), 'TITLE: File 10');
     });
 
     test('should handle excluded file types', () => {
