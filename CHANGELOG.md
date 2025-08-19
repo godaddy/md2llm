@@ -5,7 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 1.0.0 - 2024-12-19
+## 1.1.0 - 2025-08-19
+
+### Added
+- Configurable .mdc rule application with new CLI options:
+  - `--always-apply` - Explicitly set alwaysApply: true (default behavior)
+  - `--no-always-apply` - Set alwaysApply: false for conditional rule application
+  - `--apply-glob <pattern>` - Use glob patterns to apply rules to specific files/directories
+- Enhanced .mdc frontmatter generation with `glob` property support
+- Comprehensive test coverage for new rule configuration features
+
+### Features
+- **Contextual Rule Application**: Control when Cursor applies rules using glob patterns
+- **Fine-grained Control**: Target specific file types (e.g., `**/*.{js,ts}`) or directories (e.g., `src/components/**/*`)
+- **Backward Compatibility**: Default behavior unchanged, new options are opt-in
+
+### Examples
+```bash
+# Apply rules only to React components
+md2llm ./rules ./docs -f mdc --apply-glob "**/*.{jsx,tsx}"
+
+# Apply rules only to TypeScript files
+md2llm ./rules ./docs -f mdc --apply-glob "**/*.{ts,tsx}"
+
+# Disable automatic rule application
+md2llm ./rules ./docs -f mdc --no-always-apply
+```
+
+## 1.0.0 - 2025-07-06
 
 ### Added
 - Initial release of md2llm CLI tool

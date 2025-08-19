@@ -35,9 +35,9 @@ Your existing markdown files work seamlessly with:
 ### Cursor Integration
 
 When using the `.mdc` format, md2llm automatically adds front matter metadata that Cursor uses to:
-- Apply rules contextually
+- Apply rules contextually with `alwaysApply` or `glob` patterns
 - Set rule descriptions
-- Configure rule behavior
+- Configure rule behavior for specific file types or directories
 
 ### IDE-Specific Setups
 
@@ -97,6 +97,11 @@ md2llm ./output ./docs ./src
 # Convert to .mdc format (Cursor rules)
 md2llm ./output ./docs --format mdc
 
+# .mdc with custom rule application
+md2llm ./output ./docs --format mdc --no-always-apply
+md2llm ./output ./docs --format mdc --apply-glob "**/*.{js,ts}"
+md2llm ./output ./docs --format mdc --apply-glob "src/components/**/*"
+
 # Custom exclude directories
 md2llm ./output ./docs --exclude "temp,backup,old"
 
@@ -113,11 +118,18 @@ md2llm ./output ./docs ./src ./examples
 - `-e, --exclude <dirs>` - Comma-separated list of directories to exclude (default: images,node_modules,dist,build,coverage,test,cjs,generator,lib,src)
 - `-s, --source-url <url>` - Base URL for source links
 
+### MDC Rule Configuration Options
+
+- `--always-apply` - Set alwaysApply: true in mdc frontmatter (default for mdc format)
+- `--no-always-apply` - Set alwaysApply: false in mdc frontmatter
+- `--apply-glob <pattern>` - Use glob pattern instead of alwaysApply in mdc frontmatter
+
 ## Features
 
 - **Modular Architecture**: Clean, testable, and extensible codebase
 - **Code Snippet Extraction**: Automatically extracts code blocks from markdown
 - **Multiple Formats**: Supports both .md and .mdc (Cursor) output formats
+- **Configurable MDC Rules**: Control when Cursor applies rules via `alwaysApply` or `glob` patterns
 - **Package Integration**: Handles package.json scoping for README files
 - **Smart Filtering**: Excludes common non-documentation files (CHANGELOG, LICENSE, etc.)
 - **Configurable Exclusions**: Custom directory exclusion patterns
@@ -144,7 +156,33 @@ function greet(name) {
 
 ### MDC Format (Cursor)
 
-**Output file structure:**
+The .mdc format includes frontmatter that configures when Cursor applies the rules:
+
+#### Default (Always Apply)
+```yaml
+---
+description: example
+alwaysApply: true
+---
+```
+
+#### Conditional Application (--no-always-apply)
+```yaml
+---
+description: example
+alwaysApply: false
+---
+```
+
+#### Glob Pattern Application (--apply-glob)
+```yaml
+---
+description: example
+glob: "**/*.{js,ts}"
+---
+```
+
+**Complete output file structure:**
 ```
 ---
 description: example
@@ -161,6 +199,28 @@ function greet(name) {
 }
 ----------------------------------------
 @example
+```
+
+#### MDC Rule Configuration Examples
+
+**Apply rules only to React components:**
+```bash
+md2llm ./rules ./docs -f mdc --apply-glob "**/*.{jsx,tsx}"
+```
+
+**Apply rules only to TypeScript files:**
+```bash
+md2llm ./rules ./docs -f mdc --apply-glob "**/*.{ts,tsx}"
+```
+
+**Apply rules only to specific directories:**
+```bash
+md2llm ./rules ./docs -f mdc --apply-glob "src/components/**/*"
+```
+
+**Disable automatic rule application:**
+```bash
+md2llm ./rules ./docs -f mdc --no-always-apply
 ```
 
 ## Development
